@@ -1,7 +1,7 @@
 ##############################################################################
 # Account Variables
 ##############################################################################
-
+/*
 variable ibmcloud_api_key {
     description = "The IBM Cloud platform API key needed to deploy IAM enabled resources"
     type        = string
@@ -21,6 +21,7 @@ variable account_id {
     description = "Account ID where the COS and KMS instances are provisioned. This is required to ensure the authorization policy is created"
     type        = string
 }
+*/
 
 ##############################################################################
 
