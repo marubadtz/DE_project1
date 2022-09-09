@@ -1,2 +1,4 @@
-terraform.tfvars
+__pycache__/
 .terraform/
+terraform.tfvars
+credentials.py
