@@ -1,5 +1,6 @@
 __pycache__/
 .terraform/
+.ipynb_checkpoints/
 logs/
 *.csv
 terraform.tfvars
