@@ -1,5 +1,8 @@
 __pycache__/
 .terraform/
+logs/
+*.csv
 terraform.tfvars
 credentials.py
+draft.py
 .env
