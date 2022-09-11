@@ -7,3 +7,4 @@ terraform.tfvars
 credentials.py
 draft.py
 .env
+terraform/

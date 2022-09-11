@@ -13,6 +13,14 @@ from airflow.utils.dates import days_ago
 
 import pyarrow.csv as pv
 import pyarrow.parquet as pq
+import pandas as pd
+from sqlalchemy import create_engine
+
+from dotenv import load_dotenv
+
+load_dotenv(find_dotenv())
+
+DATABASE_URL = os.getenv('DATABASE_URL')
 
 
 dataset_url = "https://ct-deep-gis-open-data-website-ctdeep.hub.arcgis.com/datasets/CTDEEP::eelgrass-beds-2006-polygon.csv"
@@ -27,6 +35,18 @@ def format_to_parquet(src_file):
         return
     table = pv.read_csv(src_file)
     pq.write_table(table, src_file.replace('.csv', '.parquet'))
+
+def upload_to_postgres(src_file, DATABASE_URL):
+    src_file = src_file.replace('.csv', '.parquet')
+
+    df = pd.read_parquet(src_file)
+
+    DATABASE_URL = DATABASE_URL.replace('postgres:', 'postgresql:') # sqlalchemy doesnt work otherwise
+    engine=create_engine(DATABASE_URL)
+
+    df.to_sql(name='extracted_data', con=engine, if_exists='append')
+
+    engine.dispose()
 
 #defining DAG arguments
 # You can override them on a per-task basis during operator initialization
@@ -79,5 +99,16 @@ format_to_parquet_task = PythonOperator(
     dag=dag,
 )
 
+# upload to postgres
+upload_to_postgres_task = PythonOperator(
+    task_id="upload_to_postgres",
+    python_callable=upload_to_postgres,
+    op_kwargs={
+        "src_file": f"{path_to_local_home}/data/{dataset_file}",
+        "DATABASE_URL": f"{DATABASE_URL}",
+    },
+    dag=dag,
+)
+
 # task pipeline
-extract >> format_to_parquet_task
+extract >> format_to_parquet_task >> upload_to_postgres_task
