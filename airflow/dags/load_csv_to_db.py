@@ -16,7 +16,7 @@ import pyarrow.parquet as pq
 import pandas as pd
 from sqlalchemy import create_engine
 
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv())
 
